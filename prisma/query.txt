@@ -1,0 +1,29 @@
+INSERT INTO consultorio (idConsultorio, nombre, activo) VALUES
+  (UUID(), 'Consultorio Central', true),
+  (UUID(), 'Consultorio Norte', true),
+  (UUID(), 'Consultorio Sur', true),
+  (UUID(), 'Consultorio Este', true),
+  (UUID(), 'Consultorio Oeste', true);
+
+-- Insertar datos en la tabla practicante con horarios en formato JSON
+INSERT INTO practicante (idPracticante, numero_documento, tipo_documento, nombre, genero, estrato, barrio, localidad, horario) VALUES
+  (UUID(), '1001234567', 'CC', 'Juan Pérez', 'M', '3', 'Chapinerito', 'Chapinero', JSON_OBJECT(
+    'lun', JSON_ARRAY('08:00', '09:00', '10:00', '11:00', '12:00'),
+    'jue', JSON_ARRAY('08:00', '09:00', '10:00', '11:00', '12:00')
+  )),
+  (UUID(), '1007654321', 'CC', 'María López', 'F', '4', 'Suba Centro', 'Suba', JSON_OBJECT(
+    'lun', JSON_ARRAY('14:00', '15:00', '16:00', '17:00'),
+    'vie', JSON_ARRAY('14:00', '15:00', '16:00', '17:00')
+  )),
+  (UUID(), '1012345678', 'TI', 'Carlos Gómez', 'M', '2', 'Bosa Occidental', 'Bosa', JSON_OBJECT(
+    'mie', JSON_ARRAY('10:00', '11:00', '12:00', '13:00'),
+    'vie', JSON_ARRAY('10:00', '11:00', '12:00', '13:00')
+  )),
+  (UUID(), '1018765432', 'CC', 'Lucía Martínez', 'F', '5', 'Santa Fé', 'Centro', JSON_OBJECT(
+    'sab', JSON_ARRAY('09:00', '10:00', '11:00', '12:00'),
+    'mie', JSON_ARRAY('09:00', '10:00', '11:00', '12:00')
+  )),
+  (UUID(), '1023456789', 'CE', 'Ana Torres', 'F', '3', 'Usaquén', 'Usaquén', JSON_OBJECT(
+    'lun', JSON_ARRAY('15:00', '16:00', '17:00', '18:00'),
+    'jue', JSON_ARRAY('15:00', '16:00', '17:00', '18:00')
+  ));

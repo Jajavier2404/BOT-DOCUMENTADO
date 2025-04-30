@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+//Creacion usuario:-----------------------------------------------------------------------------------------------------------------------------------------------------
+model informacionUsuario {
+  idUsuario        String  @id @unique @default(uuid())
+  nombre           String?
+  apellido         String?
+  correo           String? @unique
+  telefonoPersonal String  @unique
+  documento        String? @unique
+  tipoDocumento    String  @default("CC")
+  testActual       String  @default("ghq12")
+  motivo           String? @db.Text
+
+  ayudaPsicologica Int     @default(1)
+  tratDatos        Boolean @default(false)
+  historial        Json?
+  flujo            String  @default("register")
+
+  practicanteAsignado String? // ID del practicante asignado permanentemente
+
+  // Relación con ghq12
+  ghq12 ghq12?
+  tests tests?
+
+  // Agendamiento
+  disponibilidad Json   @default("{}")
+  citas          cita[]
+}
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//GHQ12 + Tests:
+model ghq12 {
+  idGhq12        String @id @unique @default(uuid())
+  telefono       String @unique
+  historial      Json?
+  Puntaje        Int    @default(0)
+  preguntaActual Int    @default(0)
+  resPreg        Json?
+
+  usuario informacionUsuario @relation(fields: [telefono], references: [telefonoPersonal]) // Relación con informacionUsuario
+}
+
+model tests {
+  idTests        String @id @unique @default(uuid())
+  telefono       String @unique
+  tratDatos      String @default("")
+  historial      Json?
+  Puntaje        Int    @default(0)
+  preguntaActual Int    @default(0)
+  resPreg        Json?
+
+  usuario informacionUsuario @relation(fields: [telefono], references: [telefonoPersonal]) // Relación con informacionUsuario
+}
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//Agendamientos:
+
+model consultorio {
+  idConsultorio String  @id @unique @default(uuid())
+  nombre        String
+  activo        Boolean @default(true)
+
+  citas cita[] // Relación con cita
+}
+
+model practicante {
+  idPracticante    String @id @unique @default(uuid())
+  numero_documento String @unique
+  tipo_documento   String @default("CC")
+  nombre           String
+  genero           String
+  estrato          String
+  barrio           String
+  localidad        String
+  horario          Json
+
+  citas cita[] // Relación con cita
+}
+
+model cita {
+  idCita        String @id @unique @default(uuid())
+  idConsultorio String
+  idUsuario     String
+  idPracticante String
+  fechaHora     String
+
+  consultorio consultorio        @relation(fields: [idConsultorio], references: [idConsultorio]) // Relación con consultorio
+  usuario     informacionUsuario @relation(fields: [idUsuario], references: [idUsuario]) // Relación con informacionUsuario
+  practicante practicante        @relation(fields: [idPracticante], references: [idPracticante]) // Relación con practicante
+}
