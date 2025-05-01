@@ -6,22 +6,23 @@
 	"type": "module",
 	"scripts": {
 		"lint": "eslint . --no-ignore",
-		"dev": "bun run lint && nodemon ./src/app.js",
+		"dev": "npm run lint && nodemon ./src/app.js",
 		"start": "node ./src/app.js"
 	},
 	"keywords": [],
 	"dependencies": {
-		"@builderbot/bot": "1.2.2",
-		"@builderbot/database-mysql": "1.2.2",
-		"@builderbot/provider-baileys": "1.2.2",
-		"@prisma/client": "6.1.0",
-		"axios": "^1.7.9",
-		"openai": "^4.77.3",
-		"prisma": "^6.1.0"
+		"@builderbot/bot": "^1.2.2",
+		"@builderbot/database-mysql": "^1.2.2",
+		"@builderbot/provider-baileys": "^1.2.2",
+		"@prisma/client": "^6.7.0",
+		"axios": "^1.9.0",
+		"libsignal": "^2.0.1",
+		"openai": "^4.96.2",
+		"prisma": "^6.7.0"
 	},
 	"devDependencies": {
-		"eslint-plugin-builderbot": "latest",
 		"eslint": "^8.57.0",
+		"eslint-plugin-builderbot": "latest",
 		"nodemon": "^3.1.0"
 	},
 	"author": "",

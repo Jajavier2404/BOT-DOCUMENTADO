@@ -1,6 +1,6 @@
 /*  ------------------ cuestionario.js ------------------------
 	Este archivo se encarga de manejar los cuestionarios
-	Dependiendo del cuestionario que se elija, 	
+	Dependiendo del cuestionario que se elija, 
 	se inicia el cuestionario y se evalua el puntaje.
 	-----------------------------------------------------------
 */
@@ -26,40 +26,35 @@ export const iniciarCuestionario = async (numeroUsuario, msg, tipoTest) => {
 		let estado = await getEstadoCuestionario(numeroUsuario, tipoTest)
 
 		// Si no hay estado, inicializamos el cuestionario
-		if (estado.resPreg == null) {// si es la primera vez que realiza el test
+		if (estado.resPreg == null) {
 			let respuesta = apiCuest(msg, tipoTest)
 			respuesta = Number(respuesta)
 			console.log(respuesta)
 
-			estado = {//inicializa desde 0
+			estado = {
 				Puntaje: 0,
 				preguntaActual: 0,
-				resPreg: resPreg,// respuestas por pregunta
+				resPreg: resPreg,
 			}
-			await saveEstadoCuestionario(//guarda el estado
+			await saveEstadoCuestionario(
 				numeroUsuario,
 				estado.Puntaje,
 				estado.preguntaActual,
 				estado.resPreg,
 				tipoTest
 			)
-			return preguntas[estado.preguntaActual]// retorna la primera pregunta
-		}
-
-		// si ya habia iniciado el cuestionario
-		let respuesta = apiCuest(msg, tipoTest)// valida la respuesta del usuario
-		respuesta = Number(respuesta)
-
-		if (respuesta == 9) {// si el usuario respomne algo que genere un 9 repite pregunta acutal
 			return preguntas[estado.preguntaActual]
 		}
 
-		//Si la pregunta actual esta dentro del rango valido
+		let respuesta = apiCuest(msg, tipoTest)
+		respuesta = Number(respuesta)
+		if (respuesta == 9) {
+			return preguntas[estado.preguntaActual]
+		}
 		if (estado.preguntaActual < preguntas.length) {
-			estado.Puntaje += respuesta// suma la respuesta al puntaje total
+			estado.Puntaje += respuesta
 			estado.resPreg[respuesta].push(estado.preguntaActual + 1)
 
-			//Si ya acabo todas las preguntas guarda el estado final , puntaje y evalua el resultado final del test
 			if (estado.preguntaActual + 1 >= preguntas.length) {
 				await saveEstadoCuestionario(
 					numeroUsuario,
@@ -72,7 +67,6 @@ export const iniciarCuestionario = async (numeroUsuario, msg, tipoTest) => {
 				return await evaluarResultado(estado.Puntaje, umbrales, tipoTest, numeroUsuario)
 			}
 
-			// Si no ha terminado el cuestionario, guarda el estado y retorna la siguiente pregunta
 			estado.preguntaActual += 1
 			await saveEstadoCuestionario(
 				numeroUsuario,
@@ -119,106 +113,104 @@ const evaluarResultado = async (puntaje, umbrales, tipoTest, numeroUsuario) => {
 		})
 
 		const accion = `Debes analizar las respuestas del usuario y asignarle un caso de entre los siguientes y devolver tanto el caso, como si se puede atender o No:
-			Casos que No se pueden atender porque son casos psiquiátricos :
-			- Autolesión (cutting ).
-			- Ideación suicida
-			- Abuso físico, psicológico o sexual
-			- Bipolaridad I Y II (trastorno ciclotímico).
-			- Trastorno de identidad disociativo.
-			- Trastornos psicóticos (Esquizofrenia, trastorno delirante, psicótico breve,
-			esquizofreniforme, esquizoafectivo, inducido por sustancias).
-			- Catatonia
-			- Dependencias a sustancias psicoactivas (Sin soporte psiquiátrico o medico).
-			- Depresión Mayor (Depresión inducida por sustancias).
-			- Ansiedad remitida por psiquiatría, (ansiedad inducida por sustancias).
-			- Trastorno personalidad (Paranoide, esquizoide, esquizotípica, antisocial, histriónica, limite,
-			narcisista, evitativa, dependiente, obsesiva compulsiva).
-			- Trastorno Obsesivo compulsivo
-			- Trastorno especifico de aprendizaje
-			- Trastornos motores (trastorno del desarrollo de la coordinación). Trastornos de
-			movimientos estereotipados. TICS
-			- Síndrome de las piernas inquietas
-			- Trastornos del sueño (inducida por sustancias)
-			- Trastorno facticio
-			- Trastorno de identidad disociativo. (Amnesia disociativa, trastorno de despersonalización)
-			- Custodia de menores
-			- Casos legales.
-			- Tricotilomanía
-			- Trastorno de Excoriación
-			- Autismo
-			- TDAH
-			- Estrés Agudo
-			- Trastornos neurocognitivos (delirium, alzhéimer, demencia, neurocognitivo con cuerpos
-			de Lewis).
-			- Trastornos del lenguaje, Trastornos fonológicos (tartamudeo)
-			- Trastornos alimenticios (anorexia nerviosa, trastorno de evitación de ingesta de alimentos,
-			bulimia nerviosa, potomanía, ortorexia, pica, rumiación, atracones).
-			- Disfunción sexual inducida por sustancias.
-			- Trastornos por consumo de alcohol, intoxicación por alcohol, abstinencia por alcohol.
-			- Trastornos relacionados con los alucinógenos u opiáceos, inhalantes.
-			- Trastornos relacionados con sedantes, hipnóticos o ansiolíticos
-			- Trastornos relacionados con estimulantes
-			- Trastornos parafílicos ( voyerismo, exhibicionismo, frotteurismo, masoquismo sexual,
-			sadismo sexual, pedofilia, fetichismo, travestismo).
-			- Trastornos de disfunción sexual (Eyaculación retardada, trastorno eréctil, trastorno
-			orgásmico femenino, trastorno del interés excitación sexual femenino, trastorno de dolor
+		Casos que No se pueden atender porque son casos psiquiátricos :
+- Autolesión (cutting ).
+- Ideación suicida
+- Abuso físico, psicológico o sexual
+- Bipolaridad I Y II (trastorno ciclotímico).
+- Trastorno de identidad disociativo.
+- Trastornos psicóticos (Esquizofrenia, trastorno delirante, psicótico breve,
+esquizofreniforme, esquizoafectivo, inducido por sustancias).
+- Catatonia
+- Dependencias a sustancias psicoactivas (Sin soporte psiquiátrico o medico).
+- Depresión Mayor (Depresión inducida por sustancias).
+- Ansiedad remitida por psiquiatría, (ansiedad inducida por sustancias).
+- Trastorno personalidad (Paranoide, esquizoide, esquizotípica, antisocial, histriónica, limite,
+narcisista, evitativa, dependiente, obsesiva compulsiva).
+- Trastorno Obsesivo compulsivo
+- Trastorno especifico de aprendizaje
+- Trastornos motores (trastorno del desarrollo de la coordinación). Trastornos de
+movimientos estereotipados. TICS
+- Síndrome de las piernas inquietas
+- Trastornos del sueño (inducida por sustancias)
+- Trastorno facticio
+- Trastorno de identidad disociativo. (Amnesia disociativa, trastorno de despersonalización)
+- Custodia de menores
+- Casos legales.
+- Tricotilomanía
+- Trastorno de Excoriación
+- Autismo
+- TDAH
+- Estrés Agudo
+- Trastornos neurocognitivos (delirium, alzhéimer, demencia, neurocognitivo con cuerpos
+de Lewis).
+- Trastornos del lenguaje, Trastornos fonológicos (tartamudeo)
+- Trastornos alimenticios (anorexia nerviosa, trastorno de evitación de ingesta de alimentos,
+bulimia nerviosa, potomanía, ortorexia, pica, rumiación, atracones).
+- Disfunción sexual inducida por sustancias.
+- Trastornos por consumo de alcohol, intoxicación por alcohol, abstinencia por alcohol.
+- Trastornos relacionados con los alucinógenos u opiáceos, inhalantes.
+- Trastornos relacionados con sedantes, hipnóticos o ansiolíticos
+- Trastornos relacionados con estimulantes
+- Trastornos parafílicos ( voyerismo, exhibicionismo, frotteurismo, masoquismo sexual,
+sadismo sexual, pedofilia, fetichismo, travestismo).
+- Trastornos de disfunción sexual (Eyaculación retardada, trastorno eréctil, trastorno
+orgásmico femenino, trastorno del interés excitación sexual femenino, trastorno de dolor
 
-			génito pélvico, trastorno deseo sexual hipoactivo en el varón, eyaculación precoz, disforia
-			de género).
-			- Mutismo selectivo.
-			- trastorno de pánico.
-			- Agorafobia.
-			- Dismorfia corporal.
-			- Trastorno apego reactivo.
-			- Trastorno de la relación social desinhibida.
-			- Trastorno de estrés postraumático.
-			- Trastorno de adaptación.
-			- Trastorno de ansiedad por enfermedad.
-			- Trastorno de excreción (enuresis, encopresis).
-			- Trastornos sueño- vigilia (insomnio, hipersomnia, narcolepsia).
-			- Trastornos del sueño relacionados con la respiración ( Apnea o hipopnea obstructiva del
-			sueño, apnea central del sueño, hiperventilación relacionada con el sueño).
-			- Parasomnias (trastornos del despertar del sueño no REM “sonambulismo, terrores
-			nocturnos”, trastornos de pesadillas, trastornos del comportamiento del sueño REM).
-			- Trastornos relacionados con sustancias y trastornos adictivos (intoxicación por cafeína,
-			abstinencia de cafeína).
-			- Trastorno por consumo de cannabis (intoxicación por cannabis, abstinencia por cannabis /
-			trastornos relacionados con el tabaco ( intoxicación, abstinencia,
-			Si el psiquiatra reporta que se debe llegar acompañamiento psicológico o terapia psicológica y
-			traen la orden que se puede atender en consultorio de prácticas psicológicas o por consulta de
-			atención de EPS, de lo contrario no.
+génito pélvico, trastorno deseo sexual hipoactivo en el varón, eyaculación precoz, disforia
+de género).
+- Mutismo selectivo.
+- trastorno de pánico.
+- Agorafobia.
+- Dismorfia corporal.
+- Trastorno apego reactivo.
+- Trastorno de la relación social desinhibida.
+- Trastorno de estrés postraumático.
+- Trastorno de adaptación.
+- Trastorno de ansiedad por enfermedad.
+- Trastorno de excreción (enuresis, encopresis).
+- Trastornos sueño- vigilia (insomnio, hipersomnia, narcolepsia).
+- Trastornos del sueño relacionados con la respiración ( Apnea o hipopnea obstructiva del
+sueño, apnea central del sueño, hiperventilación relacionada con el sueño).
+- Parasomnias (trastornos del despertar del sueño no REM “sonambulismo, terrores
+nocturnos”, trastornos de pesadillas, trastornos del comportamiento del sueño REM).
+- Trastornos relacionados con sustancias y trastornos adictivos (intoxicación por cafeína,
+abstinencia de cafeína).
+- Trastorno por consumo de cannabis (intoxicación por cannabis, abstinencia por cannabis /
+trastornos relacionados con el tabaco ( intoxicación, abstinencia,
+Si el psiquiatra reporta que se debe llegar acompañamiento psicológico o terapia psicológica y
+traen la orden que se puede atender en consultorio de prácticas psicológicas o por consulta de
+atención de EPS, de lo contrario no.
 
-			Trastornos que si podemos atender
-			- Depresión leve / Moderada
-			- Ansiedad leve / Moderada/ generalizada
-			- Orientación vocacional
-			- Trastornos de síntomas somáticos
-			- Trastorno de conversión
-			- Problemas de pareja
-			- Ansiedad por separación
-			- Fobias
-			- Ansiedad Social
-			- Duelos
-			- Distimia
-			- Dificultad para manejar el estrés
-			- Conflictos familiares
-			- Poner limites
-			- Problemas de conducta leve
-			- Disfórico premenstrual.
+Trastornos que si podemos atender
+- Depresión leve / Moderada
+- Ansiedad leve / Moderada/ generalizada
+- Orientación vocacional
+- Trastornos de síntomas somáticos
+- Trastorno de conversión
+- Problemas de pareja
+- Ansiedad por separación
+- Fobias
+- Ansiedad Social
+- Duelos
+- Distimia
+- Dificultad para manejar el estrés
+- Conflictos familiares
+- Poner limites
+- Problemas de conducta leve
+- Disfórico premenstrual.
 
-			- Dificultades escolares
-			- Estrategias de afrontamiento
-			- Dificultad entorno familiar
-			- Dificultad entorno laboral
-			- Técnicas manejo emocional
-			- Toma de decisiones
-			- Autoestima
+- Dificultades escolares
+- Estrategias de afrontamiento
+- Dificultad entorno familiar
+- Dificultad entorno laboral
+- Técnicas manejo emocional
+- Toma de decisiones
+- Autoestima
 		`
 		const motivo = await apiBack1(hist, accion)
-		await addMotivo(numeroUsuario, motivo)//se guadra el motivo en la BD
-		
-		//Evaluacion de puntaje
-		if (puntaje <= umbrales.bajo.max) { 
+		await addMotivo(numeroUsuario, motivo)
+		if (puntaje <= umbrales.bajo.max) {
 			return `El cuestionario ha terminado. Su puntaje final es: ${puntaje} \n${umbrales.bajo.mensaje}\nMotivo: ${motivo}`
 		} else if (puntaje >= umbrales.medio.min && puntaje <= umbrales.medio.max) {
 			return `El cuestionario ha terminado. Su puntaje final es: ${puntaje} \n${umbrales.medio.mensaje}\nMotivo: ${motivo}`
@@ -228,7 +220,6 @@ const evaluarResultado = async (puntaje, umbrales, tipoTest, numeroUsuario) => {
 			return 'Hubo un error en su puntaje'
 		}
 	}
-	/// Si el test es el GHQ-12, no se necesita motivo
 	if (puntaje <= umbrales.bajo.max) {
 		return `El cuestionario ha terminado. Su puntaje final es: ${puntaje} \n${umbrales.bajo.mensaje}`
 	} else if (puntaje >= umbrales.medio.min && puntaje <= umbrales.medio.max) {

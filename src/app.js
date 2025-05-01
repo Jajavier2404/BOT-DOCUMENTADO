@@ -49,19 +49,19 @@ const main = async () => {
 	//---------------------------------------------------------------------------------------------------------
 
 	adapterProvider.server.post(
-		'/v1/messages', //Permite conectar los mensajes enviados con el bot
+		'/v1/messages',
 		handleCtx(async (bot, req, res) => {
 			const { number, message, urlMedia } = req.body
-			await bot.sendMessage(number, message, { media: urlMedia ?? null })//Le dice al bot que envie un mensaje al numero de telefono
-			return res.end('sended')//Termina la respuesta HTTP devolviendo un simple "sended".
+			await bot.sendMessage(number, message, { media: urlMedia ?? null })
+			return res.end('sended')
 		})
 	)
-q
+
 	adapterProvider.server.post(
-		'/v1/register',//Permite registrar un nuevo usuario con el flow de registro a un numero en especifico
+		'/v1/register',
 		handleCtx(async (bot, req, res) => {
-			const { number, name } = req.body//Extrae el numero y el nombre (ID) del cuerpo de la peticion
-			await bot.dispatch('REGISTER_FLOW', { from: number, name })//Inicia un flujo Manualmente, como si el usuario escribiera algo que dispara el flujo
+			const { number, name } = req.body
+			await bot.dispatch('REGISTER_FLOW', { from: number, name })
 			return res.end('trigger')
 		})
 	)

@@ -18,7 +18,7 @@ const aiRegister = new OpenAI({
 	apiKey: process.env.OPENAI_API_KEY,
 })
 
-let c = 0 //Contador que se usa para empujar al bot a hacer la pregunta clave de “¿Quieres ayuda psicológica?”
+let c = 0
 
 //---------------------------------------------------------------------------------------------------------
 
@@ -65,14 +65,14 @@ const tools = [
 
 //---------------------------------------------------------------------------------------------------------
 
-export async function apiAssistant1(numero, msg) {// Es el cerebro que detecta si el user quiere ayuda o no.
+export async function apiAssistant1(numero, msg) {
 	const conversationHistory = await obtenerHist(numero)
 	conversationHistory.unshift({
 		role: 'system',
 		content: assistantPrompt,
 	})
-	if (Math.floor(Math.random() * 10) <= 7) { // Sistea de presion Psicologica Sutil
-		c = c + 1 //hay 70% de chance de que el contador aumente
+	if (Math.floor(Math.random() * 10) <= 7) {
+		c = c + 1
 		console.log('Numero aleatorio')
 		console.log(c)
 		if (c >= 3) {
@@ -84,7 +84,7 @@ export async function apiAssistant1(numero, msg) {// Es el cerebro que detecta s
 		}
 	}
 
-	conversationHistory.push({ role: 'user', content: msg })//agrega al hist el mensaje del usuario
+	conversationHistory.push({ role: 'user', content: msg })
 
 	try {
 		const response = await aiRegister.chat.completions.create({
@@ -94,14 +94,13 @@ export async function apiAssistant1(numero, msg) {// Es el cerebro que detecta s
 			tool_choice: 'auto', //* Importante usar tool choice
 		})
 
-		//DECODIFICANDO LA RESPUESTA DE OPENAI 
-		const assistantMessage = response.choices[0].message.content //Respuesta si no llamo a ninguna tool
-		const toolCalls = response.choices[0].message.tool_calls //Si GPT quiere ejecutar la funcion cambiarEstado de tools
+		const assistantMessage = response.choices[0].message.content
+		const toolCalls = response.choices[0].message.tool_calls
 
 		if (toolCalls && toolCalls.length > 0) {
 			for (const call of toolCalls) {
 				if (call.type === 'function' && call.function.name === 'cambiarEstado') {
-					await cambiarEstado(numero, conversationHistory)// cuando pida ayuda psicologica, llama a la funcion cambiarEstado
+					await cambiarEstado(numero, conversationHistory)
 					await axios.post('http://localhost:3000/v1/messages', {
 						number: numero,
 						message:
@@ -124,7 +123,7 @@ export async function apiAssistant1(numero, msg) {// Es el cerebro que detecta s
 
 //---------------------------------------------------------------------------------------------------------
 
-export async function apiAssistant2(numero, msg) {// Es un simple responedor de mensajes normal
+export async function apiAssistant2(numero, msg) {
 	const conversationHistory = await obtenerHist(numero)
 	conversationHistory.unshift({ role: 'system', content: assistantPrompt })
 	conversationHistory.push({ role: 'user', content: msg })

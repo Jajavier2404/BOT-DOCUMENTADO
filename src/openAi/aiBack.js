@@ -14,7 +14,7 @@ const aiBack = new OpenAI({
 
 export async function apiBack(conversationHistory, action) {
 	try {
-		const hist = conversationHistory.slice(-6) // Limitar el historial a los últimos 6 mensajes
+		const hist = conversationHistory.slice(-6)
 		hist.push({ role: 'system', content: action }) // Agregar acción al final
 
 		const completion = await aiBack.chat.completions.create({

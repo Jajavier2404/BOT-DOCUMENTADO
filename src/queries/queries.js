@@ -24,6 +24,7 @@ export const registrarUsuario = async (
 	correo,
 	tipoDocumento,
 	documento,
+	tratDatos,
 	numero
 ) => {
 	try {
@@ -37,6 +38,7 @@ export const registrarUsuario = async (
 				correo: correo,
 				tipoDocumento: tipoDocumento,
 				documento: documento,
+				tratDatos: tratDatos,
 			},
 		})
 		return user
@@ -100,7 +102,6 @@ export const obtenerHist = async (numero) => {
 //---------------------------------------------------------------------------------------------------------
 
 export const saveHist = async (numero, historial) => {
-	// Guardar el historial en la base de datos
 	try {
 		await prisma.informacionUsuario.update({
 			where: {
