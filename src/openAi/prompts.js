@@ -1,4 +1,15 @@
 //---------------------------------------------------------------------------------------------------------
+//Este prompt NO SE UTILIZA PARA IA es unicamente para el concentimiento de la autorizacion del GHQ-12
+export const consentPrompt = `
+    Se solicita su autorización para aplicar el Cuestionario de Salud General (GHQ-12), un instrumento breve diseñado para evaluar su bienestar psicológico. La información que proporcione será tratada de manera confidencial, conforme a la Ley 1090 de 2006 y a nuestras políticas de privacidad. Sus datos serán utilizados únicamente con fines evaluativos y no se compartirán con terceros sin su consentimiento.
+    Su participación es voluntaria, y puede decidir no continuar en cualquier momento.
+
+    Por favor, confirme su consentimiento respondiendo a este mensaje:
+
+        *Sí, acepto la aplicación del GHQ-12 y el tratamiento de mis datos.*
+        *No, no acepto la aplicación del GHQ-12 ni el tratamiento de mis datos.*
+    `
+//---------------------------------------------------------------------------------------------------------
 
 export const registerPrompt = `
 	Instrucciones para Registro de Usuario:

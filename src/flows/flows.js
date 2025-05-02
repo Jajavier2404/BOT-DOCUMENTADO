@@ -7,13 +7,18 @@ import { apiAssistant1, apiAssistant2 } from './assist/aiAssistant.js'
 import { procesarMensaje } from './tests/proccesTest.js'
 import { apiBack1 } from '../openAi/aiBack.js'
 import { apiAgend } from './agend/aiAgend.js'
+import { consentPrompt} from '../openAi/prompts.js'
 
 //---------------------------------------------------------------------------------------------------------
 
 export const welcomeFlow = addKeyword(EVENTS.WELCOME).addAction(
 	async (ctx, { gotoFlow, state }) => {
 		const user = await obtenerUsuario(ctx.from)
-		await state.update({ user: user })
+		await state.update({ 
+			user: user,
+			consentimientoGHQ12: false, // Inicializar consentimiento como falso
+            esperandoConsentimiento: false // Inicializar estado de espera
+		})
 		console.log(user.flujo)
 		switch (user.flujo) {
 			case 'assistantFlow':
@@ -75,6 +80,30 @@ export const testFlow = addKeyword(utils.setEvent('TEST_FLOW')).addAction(
 	async (ctx, { flowDynamic, gotoFlow, state }) => {
 		const user = state.get('user')
 		console.log(ctx.from, '\n', user.testActual)
+
+		if (!user.consentimientoGHQ12 && user.testActual === 'ghq12') {
+            await flowDynamic(consentPrompt)
+            state.update({ esperandoConsentimiento: true })
+            return
+        }
+
+		 // Manejar la respuesta del consentimiento
+		if (state.get('esperandoConsentimiento')) {
+            if (ctx.body.toLowerCase().includes('sí, acepto')) {
+                await flowDynamic('Gracias por su consentimiento. Procederemos con el cuestionario.')
+                state.update({ consentimientoGHQ12: true, esperandoConsentimiento: false })
+            } else if (ctx.body.toLowerCase().includes('no, no acepto')) {
+                await flowDynamic('Entendido. No se aplicará el cuestionario. Gracias por su tiempo.')
+                state.update({ consentimientoGHQ12: false, esperandoConsentimiento: false })
+                return gotoFlow(finalFlow) // Redirigir al flujo final
+            } else {
+                await flowDynamic(
+                    'Por favor, responda con *Sí, acepto* o *No, no acepto* para continuar.'
+                )
+                return
+            }
+        }
+
 		// Validate procesarMensaje output
 		const message = await procesarMensaje(ctx.from, ctx.body, user.testActual)
 

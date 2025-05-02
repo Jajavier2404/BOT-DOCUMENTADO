@@ -8,7 +8,7 @@
 
 import OpenAI from 'openai'
 import { obtenerHist, saveHist, registrarUsuario, switchFlujo } from '../../queries/queries.js'
-import { registerPrompt } from '../../openAi/prompts.js'
+import { registerPrompt, } from '../../openAi/prompts.js'
 
 //---------------------------------------------------------------------------------------------------------
 
