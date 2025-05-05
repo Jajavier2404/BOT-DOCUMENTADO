@@ -8,7 +8,7 @@
 
 import OpenAI from 'openai'
 import { obtenerHist, saveHist, registrarUsuario, switchFlujo } from '../../queries/queries.js'
-import { registerPrompt, } from '../../openAi/prompts.js'
+import { registerPrompt } from '../../openAi/prompts.js'
 
 //---------------------------------------------------------------------------------------------------------
 
@@ -66,10 +66,9 @@ const tools = [
 			3. Correo
 			4. Tipo de documento (CC, TI, Pasaporte)
 			5. Numero de documento
-			6. Consentimiento explícito para el tratamiento de datos personales
-
-			IMPORTANTE: El registro solo debe realizarse cuando el usuario haya aceptado explícitamente el tratamiento de sus datos personales.
-	`,
+			
+			IMPORTANTE: Antes de registrar al usuario, asegúrate de que ha aceptado explícitamente la aplicación del Cuestionario GHQ-12 y el tratamiento de sus datos. Solo procede con el registro si el usuario ha respondido afirmativamente.
+			`,
 			parameters: {
 				type: 'object',
 				properties: {},
